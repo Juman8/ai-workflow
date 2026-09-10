@@ -9,7 +9,7 @@ echo -e "${BLUE}🚀 Bước 1: Đang tải cấu trúc AI Agentic Workflow từ
 
 # Sử dụng npx degit để kéo thư mục template (bạn nhớ đảm bảo repo này chỉ chứa thư mục .codex hoặc .ai)
 # Cờ --force giúp tải đè vào thư mục hiện tại mà không báo lỗi nếu thư mục không rỗng
-npx degit https://github.com/Juman8/ai-workflow/tree/main/.codex . --force
+npx degit Juman8/ai-workflow/.codex .codex --force
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}✅ Đã tải thành công các thư mục Agent và Templates!${NC}"
