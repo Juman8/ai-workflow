@@ -1,7 +1,11 @@
 # 🤖 AI Agentic Workflow Boilerplate
 
-A standardized, multi-agent workflow architecture for AI-assisted coding (Codex, Claude, Cursor, Aider). This script instantly scaffolds a highly disciplined `.codex/` environment into any project, enforcing a strict Human-in-the-loop and Parallel Review process.
+A standardized, multi-agent workflow architecture for AI-assisted coding (Codex, Claude, Cursor, Aider). This script instantly scaffolds a highly disciplined `.codex/` release `.claude` for claude environment into any project, enforcing a strict Human-in-the-loop and Parallel Review process.
 
+please run
+```
+bash <(curl -sL https://raw.githubusercontent.com/Juman8/ai-workflow/main/init-ai-workflow)
+```
 ## 🌟 Why this Workflow?
 
 When working with Autonomous Coding Agents, giving them unrestricted access can lead to chaotic commits and architectural drift. This workflow solves that by dividing AI into "departments":
