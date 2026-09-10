@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Harness Evaluation Report",
+  "type": "object",
+  "required": ["task_id", "iteration", "overall_score", "ac_scores", "standards_check", "iteration_feedback", "pr_summary"],
+  "properties": {
+    "task_id": { "type": "string" },
+    "iteration": { "type": "integer", "minimum": 1 },
+    "overall_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "ac_scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "score", "verdict", "fix_required"],
+        "properties": {
+          "id": { "type": "string" },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "verdict": { "type": "string" },
+          "fix_required": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "standards_check": {
+      "type": "object",
+      "properties": {
+        "no_any_type": { "type": "boolean" },
+        "no_inline_styles": { "type": "boolean" },
+        "functions_under_50_lines": { "type": "boolean" },
+        "no_direct_fetch": { "type": "boolean" },
+        "tests_pass": { "type": "boolean" },
+        "no_type_errors": { "type": "boolean" },
+        "no_lint_errors": { "type": "boolean" }
+      }
+    },
+    "standards_failures": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "iteration_feedback": { "type": "string" },
+    "pr_summary": { "type": "string" }
+  }
+}
