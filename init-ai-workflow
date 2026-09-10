@@ -149,3 +149,171 @@ EOF
 
 echo -e "${GREEN}✅ Đã setup xong toàn bộ AI Workflow trong thư mục .codex!${NC}"
 echo -e "${YELLOW}Bạn có thể bắt đầu sử dụng dự án này với Claude/Codex ngay bây giờ.${NC}"
+
+# 5. Khởi tạo hoặc cập nhật AGENTS.md
+echo -e "${YELLOW}📝 Đang tạo/cập nhật file AGENTS.md...${NC}"
+
+cat << 'EOF' >> AGENTS.md
+
+<!-- ADDINATION FOR WORKFLOW -->
+# Agent Workflow Policy
+
+## Core Principle
+
+Codex operates as an engineering agent, not as an unrestricted code generator.
+
+Every task must follow the repository workflow:
+
+1. Understand the request.
+2. Inspect the relevant repository context.
+3. Create or update the corresponding Plane issue.
+4. Produce an implementation plan.
+5. Wait for explicit human approval.
+6. Implement the approved plan.
+7. Run parallel quality reviews.
+8. Aggregate review findings.
+9. Fix validated findings.
+10. Run final Security Review.
+11. Run final validation.
+12. Report the result.
+
+---
+
+## Human Approval Gate
+
+The agent MUST NOT modify source code before the implementation
+plan has received explicit human approval.
+
+The agent may:
+
+- inspect the repository
+- inspect dependencies
+- inspect existing code
+- analyze requirements
+- create or update the Plane issue
+- prepare the implementation plan
+
+The agent MUST NOT:
+
+- modify application source code
+- modify configuration
+- add dependencies
+- modify database/API contracts
+
+before approval.
+
+Valid approval examples:
+
+- `APPROVE`
+- `APPROVED`
+- `Proceed`
+- `Execute the plan`
+
+Ambiguous responses must NOT be treated as approval.
+
+---
+
+## Implementation Rules
+
+After approval:
+
+- Implement only the approved scope.
+- Reuse existing architecture and project patterns.
+- Do not perform unrelated refactoring.
+- Do not introduce new dependencies unless required.
+- Do not change public APIs without explicit justification.
+- Keep changes focused and reviewable.
+
+---
+
+## Parallel Review
+
+After implementation, run the following review agents in parallel:
+
+1. Code Quality Agent
+2. UI/UX Agent
+3. Performance Agent
+4. Security Agent
+5. Testing Agent
+
+Review agents should inspect the implementation and report findings.
+
+Review agents MUST NOT independently modify the main working tree.
+
+Each review must classify findings as:
+
+- BLOCKER
+- HIGH
+- MEDIUM
+- LOW
+- INFO
+
+Each finding must include:
+
+- file
+- location
+- problem
+- impact
+- recommendation
+- confidence
+
+---
+
+## Finding Validation
+
+The implementation agent must evaluate all findings.
+
+Do not blindly apply recommendations.
+
+For every finding:
+
+- VALID → fix
+- INVALID → reject with reason
+- UNCERTAIN → investigate before deciding
+
+After fixing findings, rerun the relevant validation.
+
+---
+
+## Final Security Review
+
+The Security Review is the final security gate.
+
+It must review:
+
+- authentication
+- authorization
+- secrets
+- sensitive data
+- token storage
+- network communication
+- WebView
+- deep links
+- native permissions
+- dependency risks
+- logging
+- local storage
+- platform-specific security
+
+A task cannot be considered complete while a confirmed
+security BLOCKER or HIGH finding remains unresolved.
+
+---
+
+## Final Validation
+
+Before completion:
+
+- `yarn compile`
+- `yarn lint:check`
+- `yarn test`
+
+For UI/E2E changes:
+
+- `yarn test:maestro`
+
+The final response must report which checks passed,
+failed, or could not be executed.
+EOF
+
+echo -e "${GREEN}✅ Đã nạp thành công bộ Policy vào AGENTS.md${NC}"
