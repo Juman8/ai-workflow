@@ -1,0 +1,92 @@
+name: Spec Drift Detection
+
+on:
+  pull_request:
+    paths:
+      - 'docs/api-spec*.md'
+      - 'docs/db-design*.md'
+      - 'src/**/*.ts'
+      - 'src/**/*.tsx'
+      - 'migrations/**'
+
+jobs:
+  api-drift:
+    name: API Spec → Code Drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y grep findutils
+
+      - name: Detect API drift
+        env:
+          SPEC_FILE: docs/api-spec.md
+          ROUTES_DIR: src/
+        run: |
+          chmod +x scripts/drift-detect-api.sh
+          ./scripts/drift-detect-api.sh
+
+      - name: Comment on PR if drift found
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ **API Spec Drift Detected**\n\nThe `docs/api-spec.md` defines endpoints that are missing route handlers in `src/`.\n\nRun `./scripts/drift-detect-api.sh` locally to see details.\n\nEither:\n- Add the missing route handlers\n- Or update `docs/api-spec.md` to reflect the current API surface'
+            })
+
+  db-drift:
+    name: DB Design → Migrations Drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect DB drift
+        env:
+          DB_SPEC_FILE: docs/db-design.md
+          MIGRATIONS_DIR: migrations/
+        run: |
+          chmod +x scripts/drift-detect-db.sh
+          ./scripts/drift-detect-db.sh
+
+      - name: Comment on PR if drift found
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ **DB Schema Drift Detected**\n\nThe `docs/db-design.md` defines tables that are missing from `migrations/`.\n\nRun `./scripts/drift-detect-db.sh` locally to see details.\n\nEither:\n- Add migration files for the new tables\n- Or update `docs/db-design.md` to match current schema'
+            })
+
+  prp-schema:
+    name: PRP Schema Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate all PRP files
+        run: |
+          chmod +x scripts/validate-prp.sh
+          FAIL=0
+          for prp in $(find . -name "PRP-*.md" -o -name "prp-*.md" | grep -v node_modules); do
+            if ! ./scripts/validate-prp.sh "$prp"; then
+              FAIL=1
+            fi
+          done
+          exit $FAIL
